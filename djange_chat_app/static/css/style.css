@@ -54,8 +54,14 @@ h1{
     padding: 12px;
     margin-top: 8px;
     min-height: 62px;
-    min-width: unset;
+    min-width: 200px;
+    max-width: 90%;
     width: fit-content;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+    padding-top: 8px;
+    word-break: break-all;
 }
 
 .toRight{
@@ -71,6 +77,55 @@ h1{
 
 .inputMsg{
     width: 90%;
+}
+
+.dateSpan{
+    position: absolute;
+    font-size: 10px;
+    color: grey;
+    top: 4px;
+    right: 4px;
+}
+
+.authorSpan{
+    color: rgb(63,81,181);
+    margin-right: 8px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.sending{
+    background-color: rgb(203, 203, 203);
+}
+
+.sending span{
+    color:rgb(155, 155, 155);
+}
+
+.sendingSign{
+    color: white;
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 10px;
+    margin: 0;
+}
+
+.sendingFailed{
+    background-color: rgb(255, 76, 76);
+}
+
+.sendingFailed span{
+    color:white !important;
+}
+
+.failedSign{
+    color: white;
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 10px;
+    margin: 0;
 }
 
 @media screen and (max-width: 1024px){

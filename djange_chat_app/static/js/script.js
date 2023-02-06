@@ -53,3 +53,12 @@ function scrollToBottom(){
     let msgCon = document.getElementById('messageContainer');
     msgCon.scrollTop = msgCon.scrollHeight;
 }
+
+function getFormatedDate(){
+    let options = {year: 'numeric', month: 'long', day: 'numeric'};
+    let date = new Date().toLocaleDateString("en-US", options);
+    let dateArr = date.split(' ');
+    let month = dateArr[0].substring(0,3);
+    let formatedDate = month + '. ' + dateArr[1] + ' ' + dateArr[2];
+    return formatedDate;
+}

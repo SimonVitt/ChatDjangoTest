@@ -22,9 +22,8 @@
         <header class="mdl-layout__header">
             <div class="mdl-layout__header-row">
                 <!-- Title -->
-                <span class="mdl-layout-title hide600" style="margin-right: 60px">Your Chatroom</span>
                 {% if request.user.is_authenticated %}
-                <span class="mdl-layout-title">Hello {{ request.user }}!</span>
+                <span style="margin-right: 60px" class="mdl-layout-title">Hello {{ request.user }}!</span>
                 <!-- Add spacer, to align navigation to the right -->
                 <div class="mdl-layout-spacer">
                 </div>
@@ -32,6 +31,8 @@
                 <nav >
                     <a class="mdl-navigation__link" style="font-size: 16px;" href="/chat/logout/">Logout</a>
                 </nav>
+                {% else %}
+                <span class="mdl-layout-title hide600" style="margin-right: 60px">Your Chatroom</span>
                 {% endif %}
             </div>
         </header>

@@ -1,52 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
 <script>
-    async function sendMessage() {
-        let formData = new FormData();
-        let token = '{{ csrf_token }}';
 
-        formData.append('textmessage', messageField.value);
-        formData.append('csrfmiddlewaretoken', token);
-        try {
-            messageField.disabled = true;
-            messageContainer.innerHTML += `
-            <div style="color: grey" id="deleteMessage">
-                <span>[Datum]</span>{{ request.user }}: ${messageField.value}
+    async function requestsHttp(formData) {
+        messageField.disabled = true;
+        messageContainer.innerHTML += `
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight sending" id="deleteMessage">
+                <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}:</span><span>${messageField.value}</span>
+                <p class="sendingSign">sending...</p>
             </div>            
             `;
-            let response = await fetch('/chat/', {
-                method: 'POST',
-                body: formData
-            });
-            console.log(response);
-            let responseAsJSON = await response.json();
-            console.log(responseAsJSON);
-            document.getElementById('deleteMessage').remove();
-            messageContainer.innerHTML += `
+        let response = await fetch('/chat/', {
+            method: 'POST',
+            body: formData
+        });
+        scrollToBottom();
+        if (!response.ok) {
+            sendingFailed();
+        } else {
+            sendSuccess(response);
+        }
+    }
+
+    async function sendSuccess(response) {
+        let responseAsJSON = await response.json();
+        document.getElementById('deleteMessage').remove();
+        messageContainer.innerHTML += `
             <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight">
-                <span>[Datum]</span>{{ request.user }}: ${messageField.value}
+                <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}</span><span>${messageField.value}</span>
             </div>
             `;
-            scrollToBottom();
-            messageField.value = '';
-            messageField.disabled = false;
-        } catch (e) {
-            console.log(e)
-        }
+        scrollToBottom();
+        messageField.value = '';
+        messageField.disabled = false;
+    }
+
+    function sendingFailed() {
+        document.getElementById('deleteMessage').remove();
+        messageContainer.innerHTML += `
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight sendingFailed">
+                <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}</span><span>${messageField.value}</span>
+                <span class="failedSign">Failed</span>
+            </div>
+        `;
+        scrollToBottom();
+        messageField.value = '';
+        messageField.disabled = false;
+    }
+
+    function sendMessage() {
+        let formData = new FormData();
+        let token = '{{ csrf_token }}';
+        formData.append('textmessage', messageField.value);
+        formData.append('csrfmiddlewaretoken', token);
+        requestsHttp(formData);
     }
 </script>
 <div id="messageContainer" class="messageContainer">
     {% for message in messages %}
     {% if message.author == request.user %}
     <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight">
-        <span>[{{ message.created_at }}]</span>{{ message.author }}: {{ message.text }}
+        <span class="dateSpan">{{ message.created_at }}</span><span class="authorSpan">{{ message.author}}</span><span>{{ message.text }}</span>
     </div>
     {% else %}
     <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card">
-        <span>[{{ message.created_at }}]</span>{{ message.author }}: {{ message.text }}
+        <span class="dateSpan">{{ message.created_at }}</span><span class="authorSpan">{{ message.author}}</span><span>{{ message.text }}</span>
     </div>
     {% endif %}
-{% endfor %}
+    {% endfor %}
 </div>
 <form onsubmit="sendMessage(); return false;" method="post" class="sendMessageForm">
     {% csrf_token %}
@@ -54,7 +75,8 @@
         <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
         <label class="mdl-textfield__label" for="sample3">Message...</label>
     </div>
-    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="margin-left: 12px; width: calc(10% - 12px); min-width: 72px">
+    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+        style="margin-left: 12px; width: calc(10% - 12px); min-width: 72px">
         Send
     </button>
 </form>
