@@ -1,0 +1,97 @@
+.page-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.login-card{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    position: relative;
+}
+
+h1{
+    font-size: 32px;
+    margin: 0;
+}
+
+.backArrow{
+    position: absolute; 
+    top: 8px; 
+    left: 8px; 
+    font-size: 32px; 
+    color:rgb(63,81,181); 
+    cursor: pointer; 
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.wrongDetails{
+    margin-top: 12px; 
+    font-size: 12px; 
+    color: red; 
+    text-align: center;
+}
+
+.messageContainer{
+    width: 100%;
+    height: 80%;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-card{
+    height: fit-content;
+    padding: 12px;
+    margin-top: 8px;
+    min-height: 62px;
+    min-width: unset;
+    width: fit-content;
+}
+
+.toRight{
+    align-self: flex-end;
+}
+
+.sendMessageForm{
+    height: 20%;
+    width: 90%;
+    display: flex;
+    align-items: center;
+}
+
+.inputMsg{
+    width: 90%;
+}
+
+@media screen and (max-width: 1024px){
+    .mdl-layout__header-row {
+        padding: 0 16px 0 20px;
+    }
+    
+}
+
+@media (max-width: 600px){
+    .hide600{
+        display: none;
+    }
+}
+
+@media (max-width: 390px){
+    .login-card{
+        width: 290px;
+    }
+
+    .mdl-textfield {
+        width: 240px;
+    }
+}

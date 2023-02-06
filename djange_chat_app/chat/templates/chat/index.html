@@ -1,51 +1,61 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+{% extends 'base.html' %}
+{% block content %}
+<script>
+    async function sendMessage() {
+        let formData = new FormData();
+        let token = '{{ csrf_token }}';
 
-<style>
-    .page-content{
-        padding: 100px;
+        formData.append('textmessage', messageField.value);
+        formData.append('csrfmiddlewaretoken', token);
+        try {
+            messageField.disabled = true;
+            messageContainer.innerHTML += `
+            <div style="color: grey" id="deleteMessage">
+                <span>[Datum]</span>{{ request.user }}: ${messageField.value}
+            </div>            
+            `;
+            let response = await fetch('/chat/', {
+                method: 'POST',
+                body: formData
+            });
+            console.log(response);
+            let responseAsJSON = await response.json();
+            console.log(responseAsJSON);
+            document.getElementById('deleteMessage').remove();
+            messageContainer.innerHTML += `
+            <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight">
+                <span>[Datum]</span>{{ request.user }}: ${messageField.value}
+            </div>
+            `;
+            scrollToBottom();
+            messageField.value = '';
+            messageField.disabled = false;
+        } catch (e) {
+            console.log(e)
+        }
     }
-</style>
-
-<!-- Always shows a header, even in smaller screens. -->
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <header class="mdl-layout__header">
-        <div class="mdl-layout__header-row">
-            <!-- Title -->
-            <span class="mdl-layout-title">Welcome {{ request.user }}</span>
-            <!-- Add spacer, to align navigation to the right -->
-            <div class="mdl-layout-spacer"></div>
-            <!-- Navigation. We hide it in small screens. -->
-            <nav class="mdl-navigation mdl-layout--large-screen-only">
-                <a class="mdl-navigation__link" href="">Link</a>
-                <a class="mdl-navigation__link" href="">Link</a>
-                <a class="mdl-navigation__link" href="">Link</a>
-                <a class="mdl-navigation__link" href="">Link</a>
-            </nav>
-        </div>
-    </header>
-    <div class="mdl-layout__drawer">
-        <span class="mdl-layout-title">Chatroom</span>
-        <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="">Link</a>
-            <a class="mdl-navigation__link" href="">Link</a>
-            <a class="mdl-navigation__link" href="">Link</a>
-            <a class="mdl-navigation__link" href="">Link</a>
-        </nav>
+</script>
+<div id="messageContainer" class="messageContainer">
+    {% for message in messages %}
+    {% if message.author == request.user %}
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight">
+        <span>[{{ message.created_at }}]</span>{{ message.author }}: {{ message.text }}
     </div>
-    <main class="mdl-layout__content">
-        <div class="page-content">
-            <form action="/chat/" method="post">
-                {% csrf_token %}
-                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                  <input class="mdl-textfield__input" name="textmessage" type="text" id="sample3">
-                  <label class="mdl-textfield__label" for="sample3">Text...</label>
-                </div>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
-                    Send
-                </button>
-              </form>
-        </div>
-    </main>
+    {% else %}
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card">
+        <span>[{{ message.created_at }}]</span>{{ message.author }}: {{ message.text }}
+    </div>
+    {% endif %}
+{% endfor %}
 </div>
+<form onsubmit="sendMessage(); return false;" method="post" class="sendMessageForm">
+    {% csrf_token %}
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inputMsg">
+        <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
+        <label class="mdl-textfield__label" for="sample3">Message...</label>
+    </div>
+    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" style="margin-left: 12px; width: calc(10% - 12px); min-width: 72px">
+        Send
+    </button>
+</form>
+{% endblock %}
