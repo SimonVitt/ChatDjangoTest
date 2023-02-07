@@ -134,8 +134,8 @@ h1{
 .sendingSign{
     color: white;
     position: absolute;
-    top: 2px;
-    left: 4px;
+    bottom: -4px;
+    right: 4px;
     font-size: 10px;
     margin: 0;
 }
