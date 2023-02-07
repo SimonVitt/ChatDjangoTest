@@ -4,9 +4,13 @@ from django.conf import settings
 
 # Create your models here.
 class Chat(models.Model):
+    """Chat model, defines a chat
+    """
     created_at = models.DateField(default=date.today)
 
 class Message(models.Model):
+    """Message model, model for each message a user sends
+    """
     text = models.CharField(max_length=500)
     created_at = models.DateField(default=date.today)
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='chat_message_set', default=None, blank=True, null=True)

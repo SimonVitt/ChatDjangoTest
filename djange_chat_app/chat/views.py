@@ -12,6 +12,16 @@ from django.core import serializers
 
 @login_required(login_url='/login/')
 def index(request):
+    """When user is logged in this function handles a post and get request
+
+    Args:
+        request (POST): creates a new Message object, converts it to a json, adds the username of the author and sends all this back as a jsonresponse
+        request (GET): sends HTML Code and JSON for website
+
+    Returns:
+        HttpJsonResponse: Added Message with username of author
+        HttpResponse : html code and Array messages
+    """
     if request.method == 'POST':
         myChat = Chat.objects.get(id=1)
         newMessage = Message.objects.create(text=request.POST['textmessage'], chat=myChat ,author=request.user, receiver=request.user)
@@ -25,10 +35,32 @@ def index(request):
     return render(request, 'chat/index.html', {'messages': chatMessages})
 
 def logout_view(request):
+    """gets called when user wants to logout. Logs user out and redirects user
+
+    Args:
+        request (POST): logout
+
+    Returns:
+        HttpResponseRedirect: redirects to loginpage
+    """
     logout(request)
     return HttpResponseRedirect('/login/')
 
 def login_view(request):
+    """gets called when user wants to login. Validates data and if user send right data, logs user in and redirects, 
+            else return JSON saying data was wrong
+            
+            on GET request sends html data for page
+
+    Args:
+        request (POST): data of loginform is send
+        request (GET): html code for loginpage
+
+    Returns:
+        HttpResponseRedirect: redirects to chatpage or page user wanted to see
+        HttpJsonResponse: sends json back when login failed, because of wrong data
+        HttpResponse: html code for loginpage
+    """
     redirect = request.GET.get('next')
     if redirect == None:
         redirect = '/chat/'
@@ -36,12 +68,26 @@ def login_view(request):
         user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
         if user:
             login(request, user)
-            return HttpResponseRedirect(request.POST.get('redirect'))
+            return HttpResponseRedirect(redirect)
         else:
-            return render(request, 'auth/login.html', {'wrongPassword': True, 'redirect': redirect})
-    return render(request, 'auth/login.html', {'redirect': redirect})
+            return JsonResponse({'wrongPassword': True})
+    return render(request, 'auth/login.html')
 
 def register_view(request):
+    """gets called when user wants to register. Validates send data, if everything's correct, creates new user and
+        redirects to chatpage, else sends feedback of what went wrong as json (username already taken or passwords are not the same)
+        
+        on GET request sends html data for page
+
+    Args:
+        request (POST): data of register form is send
+        request (GET): html code for registerpage
+
+    Returns:
+        HttpResponseRedirect: redirects to chatpage
+        HttpJsonResponse: sends json back when register failed, because of wrong data
+        HttpResponse: html code for register
+    """
     if request.method == 'POST':
         try:
             user = User.objects.get(username=request.POST.get('username'))
@@ -52,6 +98,6 @@ def register_view(request):
                 login(request, user)
                 return HttpResponseRedirect('/chat/')
             else:
-                return render(request, 'auth/register.html', {'wrongPassword': True, 'usernameExists': False})
-        return render(request, 'auth/register.html', {'wrongPassword': False, 'usernameExists': True})
-    return render(request, 'auth/register.html', {'wrongPassword': False, 'usernameExists': False})
+                return JsonResponse({'wrongPassword': True, 'usernameExists': False})
+        return JsonResponse({'wrongPassword': False, 'usernameExists': True})
+    return render(request, 'auth/register.html')

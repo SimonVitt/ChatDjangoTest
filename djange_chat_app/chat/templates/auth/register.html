@@ -2,12 +2,24 @@
 {% block content %}
 <div class="demo-card-wide mdl-card mdl-shadow--2dp login-card">
     <div class="loadingContainer" id="loadingContainerRegister" style="display: none;">
-        <div class="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="lds-default">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
     <h1>Register</h1>
 
-    <form method="post" onsubmit="return createUser();" action="/register/">
-        {% csrf_token %}
+    <form method="post" onsubmit="handleRegister(); return false;">
         <div class="mdl-textfield mdl-js-textfield">
             <input class="mdl-textfield__input" name="username" type="text" id="usernameRegInput" maxlength="12">
             <label class="mdl-textfield__label">Username...</label>
@@ -21,18 +33,20 @@
             <label class="mdl-textfield__label">Repeat Password...</label>
         </div>
         <div style="display: flex; justify-content: center"><button
-                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="submitBtnRegister" type="submit">Register</button>
+                class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="submitBtnRegister"
+                type="submit">Register</button>
         </div>
     </form>
 
-    {% if wrongPassword %}
-    <span class="wrongDetails">The passwords are not the same. Please try again!</span>
-    {% endif %}
 
-    {% if usernameExists %}
-    <span class="wrongDetails">Username already exists. Please try again with another!</span>
-    {% endif %}
+    <span id="wrongPassword" class="wrongDetails" style="display: none;">The passwords are not the same. Please try
+        again!</span>
+    <span id="usernameExists" class="wrongDetails" style="display: none;">Username already exists. Please try again with
+        another!</span>
     <span id="emptyFields" class="wrongDetails" style="display: none;">Please fillout all fields!</span>
+    <span id="unknownErrorRegister" class="wrongDetails" style="display: none;">An unknown Error occured! Please try
+        again
+        later!</span>
 
     <a class="backArrow" href="/login/">&#8678;</a>
 </div>
