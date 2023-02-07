@@ -62,3 +62,25 @@ function getFormatedDate(){
     let formatedDate = month + '. ' + dateArr[1] + ' ' + dateArr[2];
     return formatedDate;
 }
+
+function loginJs(){
+    document.getElementById('loadingContainerLogin').style="display: flex";
+    if(usernameLoginInput.value.length == 0 || passwordLoginInput.value.length == 0){
+        document.getElementById('emptyFields').style="display: unset;";
+        document.getElementById('loadingContainerLogin').style="display: none";
+        return false;
+    }else{
+        return true;
+    }
+}
+
+function createUser(){
+    document.getElementById('loadingContainerRegister').style="display: flex";
+    if(usernameRegInput.value.length == 0 || passwordRegInput.value.length == 0 || passwordAgainRegInput.value.length == 0){
+        document.getElementById('emptyFields').style="display: unset;";
+        document.getElementById('loadingContainerRegister').style="display: none";
+        return false;
+    }else{
+        return true;
+    }
+}

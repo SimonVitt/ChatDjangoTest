@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 <script>
-
     async function requestsHttp(formData) {
         messageField.disabled = true;
+        sendMsgBtn.disabled = true;
         messageContainer.innerHTML += `
-            <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight sending" id="deleteMessage">
+            <div class="mdl-shadow--2dp message-card toRight sending" id="deleteMessage">
                 <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}:</span><span>${messageField.value}</span>
                 <p class="sendingSign">sending...</p>
             </div>            
@@ -15,7 +15,7 @@
             body: formData
         });
         scrollToBottom();
-        if (!response.ok) {
+        if (!response.ok || response.status >= 400) {
             sendingFailed();
         } else {
             sendSuccess(response);
@@ -26,26 +26,28 @@
         let responseAsJSON = await response.json();
         document.getElementById('deleteMessage').remove();
         messageContainer.innerHTML += `
-            <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight">
+            <div class="mdl-shadow--2dp message-card toRight">
                 <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}</span><span>${messageField.value}</span>
             </div>
             `;
         scrollToBottom();
         messageField.value = '';
         messageField.disabled = false;
+        sendMsgBtn.disabled = false;
     }
 
     function sendingFailed() {
         document.getElementById('deleteMessage').remove();
         messageContainer.innerHTML += `
-            <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight sendingFailed">
+            <div class="mdl-shadow--2dp message-card toRight sendingFailed">
                 <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}</span><span>${messageField.value}</span>
-                <span class="failedSign">Failed</span>
+                <span class="failedSign">Sending failed...</span>
             </div>
         `;
         scrollToBottom();
         messageField.value = '';
         messageField.disabled = false;
+        sendMsgBtn.disabled = false;
     }
 
     function sendMessage() {
@@ -56,28 +58,34 @@
         requestsHttp(formData);
     }
 </script>
+
+
 <div id="messageContainer" class="messageContainer">
     {% for message in messages %}
     {% if message.author == request.user %}
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card toRight">
+    <div class="mdl-shadow--2dp message-card toRight">
         <span class="dateSpan">{{ message.created_at }}</span><span class="authorSpan">{{ message.author}}</span><span>{{ message.text }}</span>
     </div>
     {% else %}
-    <div class="demo-card-wide mdl-card mdl-shadow--2dp message-card">
+    <div class="mdl-shadow--2dp message-card">
         <span class="dateSpan">{{ message.created_at }}</span><span class="authorSpan">{{ message.author}}</span><span>{{ message.text }}</span>
     </div>
     {% endif %}
     {% endfor %}
 </div>
+<div class="formContainerMsg">
+<div class="demo-card-wide mdl-card mdl-shadow--2dp inputMsgCard">
 <form onsubmit="sendMessage(); return false;" method="post" class="sendMessageForm">
     {% csrf_token %}
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label inputMsg">
         <input class="mdl-textfield__input" name="textmessage" type="text" id="messageField">
         <label class="mdl-textfield__label" for="sample3">Message...</label>
     </div>
-    <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+    <button id="sendMsgBtn" type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
         style="margin-left: 12px; width: calc(10% - 12px); min-width: 72px">
         Send
     </button>
 </form>
+</div>
+</div>
 {% endblock %}
