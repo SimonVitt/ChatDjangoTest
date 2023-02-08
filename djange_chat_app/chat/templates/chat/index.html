@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
+<script>
+    let requestUserName = '{{request.user}}';
+</script>
 <div id="messageContainer" class="messageContainer">
     {% for message in messages %}
     {% if message.author == request.user %}

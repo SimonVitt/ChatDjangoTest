@@ -72,7 +72,7 @@ function setToSending(){
     sendMsgBtn.disabled = true;
     messageContainer.innerHTML += `
         <div class="mdl-shadow--2dp message-card toRight sending" id="deleteMessage">
-            <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}:</span><span>${messageField.value}</span>
+            <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">${ requestUserName }:</span><span>${messageField.value}</span>
             <p class="sendingSign">sending...</p>
         </div>            
     `;
@@ -110,7 +110,7 @@ function sendingFailed() {
     document.getElementById('deleteMessage').remove();
     messageContainer.innerHTML += `
         <div class="mdl-shadow--2dp message-card toRight sendingFailed">
-            <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">{{ request.user }}</span><span>${messageField.value}</span>
+            <span class="dateSpan">${getFormatedDate()}</span><span class="authorSpan">${ requestUserName }</span><span>${messageField.value}</span>
             <span class="failedSign">Sending failed...</span>
         </div>
     `;

@@ -9,7 +9,6 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.core import serializers
 
-
 @login_required(login_url='/login/')
 def index(request):
     """When user is logged in this function handles a post and get request
@@ -22,8 +21,12 @@ def index(request):
         HttpJsonResponse: Added Message with username of author
         HttpResponse : html code and Array messages
     """
+    allChats = Chat.objects.filter()
+    if len(allChats) > 0:
+        myChat = allChats[0]
+    else:
+        myChat = Chat.objects.create()
     if request.method == 'POST':
-        myChat = Chat.objects.get(id=1)
         newMessage = Message.objects.create(text=request.POST['textmessage'], chat=myChat ,author=request.user, receiver=request.user)
         newMessageSerialized = serializers.serialize('json', [ newMessage ])
         messageWithAuthor = json.loads(newMessageSerialized[1:-1])
@@ -31,7 +34,7 @@ def index(request):
         messageWithAuthor.update({"authorname": authorname})
         newMessageWAuthorSerialized = json.dumps(messageWithAuthor)
         return JsonResponse(newMessageWAuthorSerialized, safe = False)
-    chatMessages = Message.objects.filter(chat__id=1)
+    chatMessages = Message.objects.filter(chat__id=myChat.id)
     return render(request, 'chat/index.html', {'messages': chatMessages})
 
 def logout_view(request):
