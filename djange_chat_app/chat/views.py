@@ -21,7 +21,7 @@ def index(request):
         HttpJsonResponse: Added Message with username of author
         HttpResponse : html code and Array messages
     """
-    allChats = Chat.objects.filter()
+    allChats = Chat.objects.all()
     if len(allChats) > 0:
         myChat = allChats[0]
     else:
